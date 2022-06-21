@@ -37,10 +37,10 @@ struct PhotosData: Codable {
 
 class Size: Object, Codable {
 
-    let height: Int
-    let url: String
-    let type: String
-    let width: Int
+    @objc dynamic var height: Int = 0
+    @objc dynamic var url: String = ""
+    @objc dynamic var type: String = ""
+    @objc dynamic var width: Int = 0
 }
 
 //MARK: - Realm Data

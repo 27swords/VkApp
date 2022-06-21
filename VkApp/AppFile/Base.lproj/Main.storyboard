@@ -194,6 +194,10 @@
                                                 <constraint firstItem="Zps-o0-Unb" firstAttribute="top" secondItem="mbq-Uu-OZn" secondAttribute="top" id="i3T-OU-Vad"/>
                                                 <constraint firstItem="MxK-Md-Cg9" firstAttribute="top" secondItem="mbq-Uu-OZn" secondAttribute="top" id="mJn-U9-jdG"/>
                                             </constraints>
+                                            <connections>
+                                                <outlet property="counterLabel" destination="Zps-o0-Unb" id="Ho9-pc-hJY"/>
+                                                <outlet property="likeView" destination="MxK-Md-Cg9" id="kWm-Fl-mkf"/>
+                                            </connections>
                                         </view>
                                     </subviews>
                                     <constraints>

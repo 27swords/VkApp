@@ -14,7 +14,7 @@ class LikeControl: UIControl {
     
     var likesCounter: Int = 0
     
-    // The function of clicking on the like
+    // Like clicks function
     override var isSelected: Bool {
         didSet {
             likeView?.image = isSelected ? UIImage(named: "like") : UIImage(named: "disable like")
