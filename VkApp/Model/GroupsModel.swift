@@ -6,19 +6,20 @@
 //
 
 import Foundation
+import RealmSwift
 
 
 struct GroupsModel: Codable {
-    var response: ResponseGroups
+    let response: ResponseGroups
 }
 
 struct ResponseGroups: Codable {
-    var items: [GroupData]
+    let items: [GroupData]
 }
 
 struct GroupData: Codable {
     
-    let id: Int = 0
+    let id: Int 
     let name: String
     let type: TypeEnum
     let photo100: String
@@ -36,3 +37,11 @@ enum TypeEnum: String, Codable {
     case page = "page"
 }
 
+//MARK: - Realm Data
+class GroupDataRealm: Object, Codable {
+    
+    @objc dynamic var id: Int = 0
+    @objc dynamic var name: String = ""
+    var type: TypeEnum
+    @objc dynamic var photo100: String = ""
+}

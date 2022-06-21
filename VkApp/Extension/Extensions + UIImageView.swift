@@ -1,5 +1,5 @@
 //
-//  Etension + UIImageView.swift
+//  Extensions + UIImageView.swift
 //  VkApp
 //
 //  Created by Alexander Chervoncev on 21.06.22.

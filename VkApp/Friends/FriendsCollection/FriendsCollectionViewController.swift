@@ -13,7 +13,7 @@ class FriendsCollectionViewController: UICollectionViewController, UICollectionV
     var frinedsIndex: Int = 0
     var photoOwnerID: Int?
     
-    let photoService = PhotoService()
+    let photoService = PhotoFriendsService()
     var photoData = [PhotosData]()
     
     //MARK: - Life Cycle

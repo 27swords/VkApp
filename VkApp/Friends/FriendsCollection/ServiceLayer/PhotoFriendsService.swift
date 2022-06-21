@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-final class PhotoService {
+class PhotoFriendsService {
     typealias PhotoResult = Result<[PhotosData], Constants.Service.ServiceError>
     
     private let session: URLSession = {
@@ -59,22 +59,26 @@ final class PhotoService {
             completion(.failure(.notConfigureURL))
         }
     }
+}
+
+//MARK: - Extensions 
+extension PhotoFriendsService {
     
     ///  Метод сохранения фотографий
-//    func savePhotosData(_ photos: [PhotosModel]) {
-//        
-//        do {
-//            
-//            let realm = try Realm()
-//            
-//            realm.beginWrite()
-//            realm.add(photos)
-//            
-//            try realm.commitWrite()
-//       
-//        } catch {
-//           
-//            print(error)
-//        }
-//    }
+    func savePhotosData(_ photos: [PhotosDataRealms]) {
+
+        do {
+
+            let realm = try Realm()
+
+            realm.beginWrite()
+            realm.add(photos)
+
+            try realm.commitWrite()
+
+        } catch {
+
+            print(error)
+        }
+    }
 }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-//import RealmSwift
+import RealmSwift
 
 class FriendService {
     typealias FriendsResult = Result<[FriendsData], Constants.Service.ServiceError>
@@ -48,7 +48,7 @@ class FriendService {
                 do {
                     let result = try decoder.decode(FriendsModel.self, from: data)
                     completion(.success(result.response.items))
-                    
+               
                 } catch {
                     completion(.failure(.parseError))
                 }
@@ -59,24 +59,24 @@ class FriendService {
     }
 }
 
-//extension FriendService {
-//
-//    ///  Метод сохранения друзей
-//    func saveFriendsData(_ friends: [FriendsModel]) {
-//
-//        do {
-//
-//            let realm = try Realm()
-//
-//            realm.beginWrite()
-//            realm.add(friends)
-//
-//            try realm.commitWrite()
-//
-//        } catch {
-//
-//            print(error)
-//        }
-//    }
-//
-//}
+//MARK: - Extension 
+extension FriendService {
+
+    ///  Метод сохранения друзей
+    func saveFriendsData(_ friends: [FriendsDataRealms]) {
+
+        do {
+
+            let realm = try Realm()
+
+            realm.beginWrite()
+            realm.add(friends)
+
+            try realm.commitWrite()
+
+        } catch {
+
+            print(error)
+        }
+    }
+}

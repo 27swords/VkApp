@@ -6,9 +6,9 @@
 //
 
 import Foundation
-//import RealmSwift
+import RealmSwift
 
-final class GroupService {
+class GroupService {
     typealias GroupResult = Result<[GroupData], Constants.Service.ServiceError>
 
     private let session: URLSession = {
@@ -56,23 +56,28 @@ final class GroupService {
             completion(.failure(.notConfigureURL))
         }
     }
+}
+
+// MARK: - Extensions
+extension GroupService {
     
-//    ///  Метод сохранения групп
-//    func saveGroupData(_ groups: [GroupsModel]) {
-//
-//        do {
-//
-//            let realm = try Realm()
-//
-//            realm.beginWrite()
-//            realm.add(groups)
-//
-//            try realm.commitWrite()
-//
-//        } catch {
-//
-//            print(error)
-//        }
-//    }
+    ///  Метод сохранения групп
+    func saveGroupData(_ groups: [GroupDataRealm]) {
+
+        do {
+
+            let realm = try Realm()
+
+            realm.beginWrite()
+            realm.add(groups)
+
+            try realm.commitWrite()
+
+        } catch {
+
+            print(error)
+        }
+    }
+    
 }
 
