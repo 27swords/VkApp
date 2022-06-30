@@ -8,7 +8,6 @@
 import Foundation
 
 import UIKit
-import SwiftUI
 
 //MARK: - Struct
 struct SectionFriend {
@@ -76,6 +75,7 @@ class FriendsTableViewController: UITableViewController {
               let userAvatar = UIImage(data: imageData)
                 
         else {
+            
             return UITableViewCell()
         }
         

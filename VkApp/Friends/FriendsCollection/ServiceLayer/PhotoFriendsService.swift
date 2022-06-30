@@ -16,30 +16,29 @@ final class PhotoFriendsService {
     }()
     
     /// функция добавления фотографий пользователя
-    func loadPhotoVK(for id: String, completion: @escaping ([PhotosData]) -> Void) async {
+    func loadPhotoVK(for id: Int) async throws {
 
         // параметры фотографий
         let params: [String: String] = [
             "owner_id" : "\(id)",
             "v" : "5.131",
             "access_token": Session.shared.token,
-            "extended" : "0"
+            "extended" : "1"
         ]
         
         guard Session.shared.token != "" else  { return }
         
         let url: URL = .configureUrl(token: Session.shared.token,
-                                     method: Constants.Service.Paths.photosGet,
+                                     method: Constants.Service.Paths.photosGetAll,
                                      params: params)
         print("DBG", url)
         
+        let request = URLRequest(url: url)
         do {
-            let (data, _) = try await session.data(from: url)
+            let (data, _) = try await session.data(for: request)
             let decoder = JSONDecoder()
-            let result = try decoder.decode(PhotosRequest.self, from: data).response.items
-            completion(result)
-        } catch {
-            print(error)
+            let result = try decoder.decode(PhotosData.self, from: data)//.response.items
+            await savePhotosData(photos: result)
         }
     }
 }
@@ -48,15 +47,15 @@ final class PhotoFriendsService {
 private extension PhotoFriendsService {
 
     ///  Метод сохранения фотографий
-    func savePhotosData(photos: [PhotosData]) {
-        if let realm = try? Realm() {
+    func savePhotosData(photos: PhotosData) async {
+        if let realm = try? await Realm() {
             print(realm.configuration.fileURL ?? "")
             do {
-                try realm.write({
+                try realm.write {
                     realm.add(photos, update: .modified)
-                })
-            } catch {
-                print("error")
+                }
+            } catch let error as NSError {
+                print("Error Realm: \(error.localizedDescription) ")
             }
         }
     }

@@ -8,25 +8,23 @@
 import Foundation
 import RealmSwift
 
-struct PhotosRequest: Decodable {
-    let response: ResponsePhotos
-}
-
-struct ResponsePhotos: Decodable {
-    let items: [PhotosData]
-    
-}
+//struct PhotosRequest: Decodable {
+//    let response: ResponsePhotos
+//}
+//
+//struct ResponsePhotos: Decodable {
+//    let items: [PhotosData]
+//
+//}
 
 final class PhotosData: Object, Decodable {
 
-    //@objc dynamic var albumID: Int = 0
     @objc dynamic var id: Int = 0
     @objc dynamic var ownerID: Int = 0
     var sizes = List<Size>()
     @objc dynamic var likes: Likes?
     
     enum CodingKeys: String, CodingKey {
-        //case albumID = "album_id"
         case id
         case ownerID = "owner_id"
         case sizes = "sizes"
@@ -37,14 +35,13 @@ final class PhotosData: Object, Decodable {
         return "id"
     }
     
-//    convenience required init(from decoder: Decoder) throws {
-//        self.init()
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        self.albumID = try container.decodeIfPresent(Int.self, forKey: .albumID) ?? 0
-//        self.id = try container.decodeIfPresent(Int.self, forKey: .id) ?? 0
-//        self.ownerID = try container.decodeIfPresent(Int.self, forKey: .ownerID) ?? 0
-//        self.sizes = try container.decode(List<Size>.self, forKey: .sizes)
-//    }
+    convenience init(from decoder: Decoder) throws {
+        self.init()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(Int.self, forKey: .id) ?? 0
+        self.ownerID = try container.decodeIfPresent(Int.self, forKey: .ownerID) ?? 0
+        self.sizes = try container.decode(List<Size>.self, forKey: .sizes)
+    }
 }
 
 final class Likes: Object, Decodable {

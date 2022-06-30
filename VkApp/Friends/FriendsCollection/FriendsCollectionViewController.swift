@@ -20,8 +20,8 @@ class FriendsCollectionViewController: UICollectionViewController, UICollectionV
     var photoOwnerID: Int?
     
     private let photoService = PhotoFriendsService()
-    var photoData = [PhotosData]()
-    var userId: String = ""
+    var photoData: PhotosData?
+    var userId: Int = 0
     var storedImages = [String]()
     
     //MARK: - Life Cycle
@@ -32,19 +32,20 @@ class FriendsCollectionViewController: UICollectionViewController, UICollectionV
     
     //MARK: - Methods
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return storedImages.count
+        return  storedImages.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as? FriendsCollectionViewCell
         
         cell?.friendsPhotoImage.loadImage(with: storedImages[indexPath.item])
-        cell?.likeControl.isSelected = photoData[indexPath.item].likes?.isLiked == 1 ? true : false
-        cell?.likeControl.likesCounter = photoData[indexPath.item].likes?.likesCounter ?? 0
-        
-        cell?.markedAsLiked = { [weak self] isSelected in
-            self?.photoData[indexPath.item].likes?.isLiked = isSelected ? 1 : 0
-        }
+                
+//        cell?.likeControl.isSelected = photoData[indexPath.item].likes?.isLiked == 1 ? true : false
+//        cell?.likeControl.likesCounter = photoData[indexPath.item].likes?.likesCounter ?? 0
+//
+//        cell?.markedAsLiked = { [weak self] isSelected in
+//            self?.photoData[indexPath.item].likes?.isLiked = isSelected ? 1 : 0
+//        }
         
         
         return cell ?? UICollectionViewCell()
@@ -53,29 +54,24 @@ class FriendsCollectionViewController: UICollectionViewController, UICollectionV
 
 extension FriendsCollectionViewController {
     func loadPhoto() {
+        
         Task {
-            await photoService.loadPhotoVK(for: userId) { [weak self] photos in
-                self?.photoData = photos
-                if let imageLInks = self?.sortImage(type: "w", array: photos) {
-                    self?.storedImages = imageLInks
-                }
-            }
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
+            try await photoService.loadPhotoVK(for: userId)
+            await loadRealmData()
+            collectionView.reloadData()
         }
     }
-    
-    func sortImage(type: String, array: [PhotosData]) -> [String] {
-        var links = [String]()
 
-        for model in array {
-            for size in model.sizes {
-                if size.type == type {
-                    links.append(size.url)
+    func loadRealmData() async {
+        do {
+            let realmDB = try await Realm()
+            realmDB.objects(PhotosData.self)
+                .where { $0.id == userId }
+                .forEach { friends in
+                    self.photoData = friends
                 }
-            }
+        } catch let error as NSError {
+            print("Realm Objects Error: \(error.localizedDescription)")
         }
-        return links
     }
 }
