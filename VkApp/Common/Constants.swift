@@ -14,7 +14,7 @@ struct Constants {
         enum Paths: String, CaseIterable {
             case friendsGet = "/method/friends.get"
             case groupsGet = "/method/groups.get"
-            case photosGet = "/method/photos.get"
+            case photosGet = "/method/photos.getAll"
             
         }
         

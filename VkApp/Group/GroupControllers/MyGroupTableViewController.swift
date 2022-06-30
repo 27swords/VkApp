@@ -20,16 +20,11 @@ class MyGroupTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        groupsService.loadGroups { result in
-            switch result {
-            case .success(let group):
-                DispatchQueue.main.async {
-                    self.SubscribedGroups = group
-                    self.tableView.reloadData()
-                }
-
-            case .failure(_):
-                return
+        groupsService.loadGroups { [weak self] groups in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.SubscribedGroups = groups
+                self.tableView.reloadData()
             }
         }
     }

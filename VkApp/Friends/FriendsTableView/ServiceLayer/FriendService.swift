@@ -8,75 +8,40 @@
 import Foundation
 import RealmSwift
 
-class FriendService {
-    typealias FriendsResult = Result<[FriendsData], Constants.Service.ServiceError>
+final class FriendService {
 
     private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        let session = URLSession(configuration: config)
+        let session = URLSession(configuration: .default)
         return session
     }()
 
     ///  функция добавления друзей
-    func loadFriends(completion: @escaping (FriendsResult) -> ()) {
-        guard let token = Session.shared.token else {
-            return completion(.failure(.notConfigureURL))
-        }
-
+    func loadFriends(completion: @escaping ([FriendsData]) -> Void) {
+    
         /// параметры для отображения
         let params: [String: String] = [
             "v" : "5.131",
-            "fields": "photo_100"
+            "order": "hints",
+            "fields": "photo_100, first_name, last_name",
+            "access_token": Session.shared.token
         ]
 
-        do {
-            let url: URL = try .configureUrl(token: token,
-                                             method: .friendsGet,
-                                             params: params)
+        guard Session.shared.token != "" else { return }
+        
+        let url: URL = .configureUrl(token: Session.shared.token,
+                                     method: Constants.Service.Paths.friendsGet,
+                                     params: params)
+        
+        session.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
             
-            var request = URLRequest(url: url)
-            
-            request.httpMethod = Constants.Service.get.rawValue
-            
-            session.dataTask(with: request) { data, _, error in
-                guard let data = data, error == nil else {
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                do {
-                    let result = try decoder.decode(FriendsModel.self, from: data)
-                    completion(.success(result.response.items))
-               
-                } catch {
-                    completion(.failure(.parseError))
-                }
-            }.resume()
-        } catch {
-            completion(.failure(.notConfigureURL))
-        }
+            do {
+                let result = try JSONDecoder().decode(FriendsRequest.self, from: data)
+                completion(result.response.items)
+            } catch {
+                print(error)
+            }
+        }.resume()
     }
 }
 
-//MARK: - Extension 
-extension FriendService {
-
-    ///  Метод сохранения друзей
-    func saveFriendsData(_ friends: [FriendsDataRealms]) {
-
-        do {
-
-            let realm = try Realm()
-
-            realm.beginWrite()
-            realm.add(friends)
-
-            try realm.commitWrite()
-
-        } catch {
-
-            print(error)
-        }
-    }
-}

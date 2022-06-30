@@ -15,6 +15,6 @@ final class Session {
     private init() {}
     
     // Access token
-    var token: String?
-    var userID: Int?
+    var token: String = ""
+    var userID: Int = 0
 }

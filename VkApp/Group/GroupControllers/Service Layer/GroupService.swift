@@ -9,75 +9,37 @@ import Foundation
 import RealmSwift
 
 class GroupService {
-    typealias GroupResult = Result<[GroupData], Constants.Service.ServiceError>
 
     private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        let session = URLSession(configuration: config)
+        let session = URLSession(configuration: .default)
         return session
     }()
 
-    func loadGroups(completion: @escaping (GroupResult) -> ()) {
-        guard let token = Session.shared.token else {
-            return completion(.failure(.notConfigureURL))
-        }
-
-        let params: [String: String] = [
+    func loadGroups(completion: @escaping ([GroupData]) -> Void) {
+        
+        let params = [
             "extended" : "1",
-            "v" : "5.131"
+            "v" : "5.131",
+            "access_token": Session.shared.token
         ]
 
-        do {
-            let url: URL = try .configureUrl(token: token,
-                                             method: .groupsGet,
-                                             params: params)
+        guard Session.shared.token != "" else { return }
+        
+        let url: URL = .configureUrl(token: Session.shared.token,
+                                     method: Constants.Service.Paths.groupsGet,
+                                     params: params)
+        
+        session.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
             
-            var request = URLRequest(url: url)
-            
-            request.httpMethod = Constants.Service.get.rawValue
-            
-            session.dataTask(with: request) { data, _, error in
-                guard let data = data, error == nil else {
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                do {
-                    let result = try decoder.decode(GroupsModel.self, from: data)
-                    completion(.success(result.response.items))
-                    
-                } catch {
-                    
-                    completion(.failure(.parseError))
-                }
-            }.resume()
-        } catch {
-            completion(.failure(.notConfigureURL))
-        }
+            do {
+                let result = try JSONDecoder().decode(GroupsRequest.self, from: data)
+                completion(result.response.items)
+            } catch {
+                print(error)
+            }
+        }.resume()
     }
 }
 
-// MARK: - Extensions
-extension GroupService {
-    
-    ///  Метод сохранения групп
-    func saveGroupData(_ groups: [GroupDataRealm]) {
-
-        do {
-
-            let realm = try Realm()
-
-            realm.beginWrite()
-            realm.add(groups)
-
-            try realm.commitWrite()
-
-        } catch {
-
-            print(error)
-        }
-    }
-    
-}
 

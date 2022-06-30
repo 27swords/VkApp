@@ -8,77 +8,57 @@
 import Foundation
 import RealmSwift
 
-class PhotoFriendsService {
-    typealias PhotoResult = Result<[PhotosData], Constants.Service.ServiceError>
-    
+final class PhotoFriendsService {
+
     private let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        let session = URLSession(configuration: config)
+        let session = URLSession(configuration: .default)
         return session
     }()
     
     /// функция добавления фотографий пользователя
-    func loadPhotoVK(ownerID: Int, completion: @escaping (PhotoResult) -> ()) {
-        guard let token = Session.shared.token else {
-            return completion(.failure(.notConfigureURL))
-        }
-        
+    func loadPhotoVK(for id: String, completion: @escaping ([PhotosData]) -> Void) async {
+
         // параметры фотографий
         let params: [String: String] = [
-            "owner_id" : "\(ownerID)",
-            "album_id" : "wall",
+            "owner_id" : "\(id)",
             "v" : "5.131",
+            "access_token": Session.shared.token,
             "extended" : "0"
         ]
         
+        guard Session.shared.token != "" else  { return }
+        
+        let url: URL = .configureUrl(token: Session.shared.token,
+                                     method: Constants.Service.Paths.photosGet,
+                                     params: params)
+        print("DBG", url)
+        
         do {
-            let url: URL = try .configureUrl(token: token,
-                                             method: .photosGet,
-                                             params: params)
-            
-            var request = URLRequest(url: url)
-            
-            request.httpMethod = Constants.Service.get.rawValue
-            
-            session.dataTask(with: request) { data, _, error in
-                guard let data = data, error == nil else {
-                    return
-                }
-                
-                let decoder = JSONDecoder()
-                
-                do {
-                    let result = try decoder.decode(PhotosModel.self, from: data)
-                    completion(.success(result.response.items))
-                    
-                } catch {
-                    completion(.failure(.parseError))
-                }
-            }.resume()
+            let (data, _) = try await session.data(from: url)
+            let decoder = JSONDecoder()
+            let result = try decoder.decode(PhotosRequest.self, from: data).response.items
+            completion(result)
         } catch {
-            completion(.failure(.notConfigureURL))
-        }
-    }
-}
-
-//MARK: - Extensions 
-extension PhotoFriendsService {
-    
-    ///  Метод сохранения фотографий
-    func savePhotosData(_ photos: [PhotosDataRealms]) {
-
-        do {
-
-            let realm = try Realm()
-
-            realm.beginWrite()
-            realm.add(photos)
-
-            try realm.commitWrite()
-
-        } catch {
-
             print(error)
         }
     }
 }
+
+//MARK: - Extensions
+private extension PhotoFriendsService {
+
+    ///  Метод сохранения фотографий
+    func savePhotosData(photos: [PhotosData]) {
+        if let realm = try? Realm() {
+            print(realm.configuration.fileURL ?? "")
+            do {
+                try realm.write({
+                    realm.add(photos, update: .modified)
+                })
+            } catch {
+                print("error")
+            }
+        }
+    }
+}
+

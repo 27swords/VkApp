@@ -47,17 +47,21 @@ extension VKLoginViewController: WKNavigationDelegate {
                 dict[key] = value
                 return dict
             }
-        if let token = params["access_token"], let userId = params["user_id"] {
-            Session.shared.token = token
-            Session.shared.userID = Int(userId)
-            
-            print(token)
-            print(userId)
-            
-            decisionHandler(.cancel)
-            
-            performSegue(withIdentifier: "MessengerMenu", sender: self)
+        
+        guard
+            let token = params["access_token"],
+            let userIDString = params["user_id"],
+            let userID = Int(userIDString)
+        else {
+            return
         }
+        
+        Session.shared.token = token
+        Session.shared.userID = userID
+        
+        decisionHandler(.cancel)
+        
+        performSegue(withIdentifier: "MessengerMenu", sender: self)
     }
 }
 

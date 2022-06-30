@@ -8,6 +8,7 @@
 import Foundation
 
 import UIKit
+import SwiftUI
 
 //MARK: - Struct
 struct SectionFriend {
@@ -21,9 +22,8 @@ class FriendsTableViewController: UITableViewController {
     @IBOutlet weak var friendsSearchBar: UISearchBar!
     
     private var friendsCount: ResponseFriends?
-    
-    let friendService = FriendService()
-    var friendsData = [FriendsData]()
+    private var friendService = FriendService()
+    private var friendsData: [FriendsData] = [FriendsData]()
     
     var sectionFriend: [SectionFriend] {
         var result = [SectionFriend]()
@@ -47,16 +47,11 @@ class FriendsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        friendService.loadFriends { result in
-            switch result {
-            case .success(let friend):
-                DispatchQueue.main.async {
-                    self.friendsData = friend
-                    self.tableView.reloadData()
-                }
-                
-            case .failure(_):
-                return
+        friendService.loadFriends { [weak self] friends in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.friendsData = friends
+                self.tableView.reloadData()
             }
         }
     }
@@ -76,8 +71,16 @@ class FriendsTableViewController: UITableViewController {
         let sectionFriend = sectionFriend[indexPath.section]
         let friend = sectionFriend.friend[indexPath.row]
         
-        cell?.nameFriendsLabel.text = friend.firstName + " " + friend.lastName
-        cell?.friendsImage.loadImage(with: friend.photo100)
+        guard let path = URL(string: friend.photo100),
+              let imageData = try? Data(contentsOf: path, options: .uncached),
+              let userAvatar = UIImage(data: imageData)
+                
+        else {
+            return UITableViewCell()
+        }
+        
+        cell?.friendsImage.image = userAvatar
+        cell?.nameFriendsLabel.text = "\(friend.firstName) \(friend.lastName)"
         
         return cell ?? UITableViewCell()
     }

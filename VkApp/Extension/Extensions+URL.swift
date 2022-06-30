@@ -11,7 +11,7 @@ extension URL {
     
     static func configureUrl(token: String,
                              method: Constants.Service.Paths,
-                             params: [String: String]) throws -> URL {
+                             params: [String: String]) -> URL {
             
         var queryItems: [URLQueryItem] = []
         
@@ -26,9 +26,8 @@ extension URL {
         urlComponents.path = method.rawValue
         urlComponents.queryItems = queryItems
         
-        guard let url = urlComponents.url else {
-            throw Constants.Service.ServiceError.notConfigureURL
-        }
+        guard let url = urlComponents.url else { fatalError("") }
+        
         return url
     }
 }

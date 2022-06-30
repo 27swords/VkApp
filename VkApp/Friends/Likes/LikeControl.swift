@@ -13,6 +13,7 @@ class LikeControl: UIControl {
     @IBOutlet weak var counterLabel: UILabel?
     
     var likesCounter: Int = 0
+    var photos = [PhotosData]()
     
     // Like clicks function
     override var isSelected: Bool {
