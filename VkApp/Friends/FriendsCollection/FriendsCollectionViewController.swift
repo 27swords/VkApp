@@ -66,7 +66,7 @@ extension FriendsCollectionViewController {
         do {
             let realmDB = try await Realm()
             realmDB.objects(PhotosData.self)
-                .where { $0.id == userId }
+                .where { $0.ownerID == userId }
                 .forEach { friends in
                     self.photoData = friends
                 }

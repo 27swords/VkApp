@@ -8,12 +8,12 @@
 import Foundation
 import RealmSwift
 
-struct FriendsRequest: Decodable {
+struct FriendsResponse: Decodable {
 
-    let response: ResponseFriends
+    let response: FriendsItems
 }
 
-struct ResponseFriends: Decodable {
+struct FriendsItems: Decodable {
     let items: [FriendsData]
 }
 
@@ -38,5 +38,9 @@ final class FriendsData: Object, Decodable {
         self.firstName = try container.decodeIfPresent(String.self, forKey: .firstName) ?? ""
         self.lastName = try container.decodeIfPresent(String.self, forKey: .lastName) ?? ""
         self.photo100 = try container.decodeIfPresent(String.self, forKey: .photo100) ?? ""
+    }
+    
+    override class func primaryKey() -> String? {
+        "id"
     }
 }

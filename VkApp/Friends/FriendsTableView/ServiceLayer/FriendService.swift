@@ -16,10 +16,10 @@ final class FriendService {
     }()
 
     ///  функция добавления друзей
-    func loadFriends(completion: @escaping ([FriendsData]) -> Void) {
+    func loadFriends() {
     
         /// параметры для отображения
-        let params: [String: String] = [
+        let params = [
             "v" : "5.131",
             "order": "hints",
             "fields": "photo_100, first_name, last_name",
@@ -36,8 +36,10 @@ final class FriendService {
             guard let data = data, error == nil else { return }
             
             do {
-                let result = try JSONDecoder().decode(FriendsRequest.self, from: data)
-                completion(result.response.items)
+                let result = try JSONDecoder().decode(FriendsResponse.self, from: data).response.items
+                DispatchQueue.main.async {
+                    self.saveFriends(result)
+                }
             } catch {
                 print(error)
             }
@@ -45,3 +47,16 @@ final class FriendService {
     }
 }
 
+private extension FriendService {
+    func saveFriends(_ friends: [FriendsData]) {
+        do {
+            let realm = try Realm()
+            print(realm.configuration.fileURL ?? "")
+            try realm.write {
+                realm.add(friends, update: .modified)
+            }
+        } catch {
+            print("DBG", error)
+        }
+    }
+}

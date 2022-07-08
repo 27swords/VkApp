@@ -8,14 +8,14 @@
 import Foundation
 import RealmSwift
 
-//struct PhotosRequest: Decodable {
-//    let response: ResponsePhotos
-//}
-//
-//struct ResponsePhotos: Decodable {
-//    let items: [PhotosData]
-//
-//}
+struct PhotosRequest: Decodable {
+    let response: ResponsePhotos
+}
+
+struct ResponsePhotos: Decodable {
+    let items: [PhotosData]
+
+}
 
 final class PhotosData: Object, Decodable {
 

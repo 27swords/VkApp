@@ -9,11 +9,11 @@ import Foundation
 import RealmSwift
 
 
-struct GroupsRequest: Decodable {
-    let response: ResponseGroups
+struct GroupsResponse: Decodable {
+    let response: GroupsItems
 }
 
-struct ResponseGroups: Decodable {
+struct GroupsItems: Decodable {
     let items: [GroupData]
 }
 
@@ -21,19 +21,24 @@ class GroupData: Object, Decodable {
     
     @objc dynamic var id: Int = 0
     @objc dynamic var name: String = ""
-    var type: TypeEnum?
     @objc dynamic var photo100: String = ""
     
     enum CodingKeys: String, CodingKey {
         case id
         case name = "name"
-        case type = "type"
         case photo100 = "photo_100"
     }
-}
+    
+    override class func primaryKey() -> String? {
+        "id"
+    }
+    
+    required convenience init(from decoder: Decoder) throws {
+        self.init()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(Int.self, forKey: .id) ?? 0
+        self.name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        self.photo100 = try container.decodeIfPresent(String.self, forKey: .photo100) ?? ""
 
-enum TypeEnum: String, Codable {
-    case group = "group"
-    case page = "page"
+    }
 }
-

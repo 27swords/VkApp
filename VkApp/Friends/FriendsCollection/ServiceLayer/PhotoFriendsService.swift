@@ -29,7 +29,7 @@ final class PhotoFriendsService {
         guard Session.shared.token != "" else  { return }
         
         let url: URL = .configureUrl(token: Session.shared.token,
-                                     method: Constants.Service.Paths.photosGetAll,
+                                     method: Constants.Service.Paths.photosGet,
                                      params: params)
         print("DBG", url)
         

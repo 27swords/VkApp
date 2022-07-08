@@ -19,4 +19,9 @@ class MyGroupTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+    
+    func configureCellForGroup(_ group: GroupData) {
+        myGroupLabel.text = group.name
+        photosMyGroupImage.loadImage(with: group.photo100)
+    }
 }

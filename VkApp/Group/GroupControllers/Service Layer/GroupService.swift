@@ -15,7 +15,7 @@ class GroupService {
         return session
     }()
 
-    func loadGroups(completion: @escaping ([GroupData]) -> Void) {
+    func loadGroups() {
         
         let params = [
             "extended" : "1",
@@ -28,18 +28,33 @@ class GroupService {
         let url: URL = .configureUrl(token: Session.shared.token,
                                      method: Constants.Service.Paths.groupsGet,
                                      params: params)
+        print("DBG", url)
         
         session.dataTask(with: url) { data, _, error in
             guard let data = data, error == nil else { return }
             
             do {
-                let result = try JSONDecoder().decode(GroupsRequest.self, from: data)
-                completion(result.response.items)
+                let result = try JSONDecoder().decode(GroupsResponse.self, from: data).response.items
+                DispatchQueue.main.async {
+                    self.saveGroups(result)
+                }
             } catch {
-                print(error)
+                print("DBG parseError", Constants.Service.ServiceError.parseError)
             }
         }.resume()
     }
 }
 
-
+private extension GroupService {
+    func saveGroups(_ groups: [GroupData]) {
+        do {
+            let realm = try Realm()
+            print(realm.configuration.fileURL ?? "")
+            try realm.write {
+                realm.add(groups, update: .modified)
+            }
+        } catch {
+            print("DBG", error)
+        }
+    }
+}

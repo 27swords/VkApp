@@ -30,6 +30,12 @@ class FriendsTableViewCell: UITableViewCell {
     }
     
     //MARK: - Methods
+    
+    func configureCellForFreind(_ friend: FriendsData) {
+        nameFriendsLabel.text = friend.firstName + " " + friend.lastName
+        friendsImage.loadImage(with: friend.photo100)
+    }
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         

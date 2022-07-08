@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4E160E9328614CA1002CF6CC /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 4E160E9228614CA1002CF6CC /* Alamofire */; };
+		4E2AEEB92875E45300CF6C20 /* RealmCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AEEB82875E45300CF6C20 /* RealmCacheService.swift */; };
 		4EB36A5428612D380042DA2A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB36A5328612D380042DA2A /* AppDelegate.swift */; };
 		4EB36A5628612D380042DA2A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB36A5528612D380042DA2A /* SceneDelegate.swift */; };
 		4EB36A5B28612D380042DA2A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4EB36A5928612D380042DA2A /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4E2AEEB82875E45300CF6C20 /* RealmCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmCacheService.swift; sourceTree = "<group>"; };
 		4EB36A5028612D380042DA2A /* VkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EB36A5328612D380042DA2A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4EB36A5528612D380042DA2A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				4EB36A6C28612D9A0042DA2A /* Constants.swift */,
+				4E2AEEB82875E45300CF6C20 /* RealmCacheService.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				4EB36A7728612E900042DA2A /* PhotosModel.swift in Sources */,
 				4EB36A5428612D380042DA2A /* AppDelegate.swift in Sources */,
 				4EB36A5628612D380042DA2A /* SceneDelegate.swift in Sources */,
+				4E2AEEB92875E45300CF6C20 /* RealmCacheService.swift in Sources */,
 				4EB36A99286130590042DA2A /* LikeControl.swift in Sources */,
 				4EB36A962861303E0042DA2A /* AvatarView.swift in Sources */,
 				4EB36A7528612DFA0042DA2A /* FriendsModel.swift in Sources */,
